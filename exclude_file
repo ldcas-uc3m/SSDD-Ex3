@@ -1,0 +1,10 @@
+exclude_file
+README.md
+img
+zip.sh
+.git*
+servidor
+cliente
+testing
+*.o
+*.so
