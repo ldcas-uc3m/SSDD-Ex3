@@ -23,8 +23,6 @@ Tenga en cuenta para las llamadas anteriores que también se considera error, po
 
 Todas las operaciones anteriores deben realizarse de forma atómica en el servidor.  
 
-Diseñe e implemente, utilizando exclusivamente colas de mensajes POSIX y el lenguaje de programación C, el sistema que implemente este servicio de elementos `clave-valor1-valor2`. Para ello debe:
-
 Diseñe e implemente, utilizando exclusivamente el lenguaje de programación C y el modelo de ONC RPC, el sistema que implementa este servicio de elementos `clave-valor1-valor2-valor3`. Para ello debe:
 1. Diseñar y especificar la interfaz de servicio (archivo con extensión `.x`) que permite dar soporte a esta funcionalidad.
 2. Desarrollar el código del servidor ([`servidor.c`](src/servidor.c)) encargado de gestionar las estructuras de datos que almacenan los elementos `clave-valor1-valor2-valor3`. Puede elegirse la estructura de datos que se estime oportuno, siempre que no imponga un límite en el número de elementos que se pueden almacenar. El servidor desarrollado debe ser concurrente.
