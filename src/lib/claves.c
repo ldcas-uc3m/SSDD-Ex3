@@ -24,11 +24,11 @@ Implementación de las operaciones del cliente
 #define COPY_KEY 5
 #define DELETE_KEY 6
 
-char[] host = getenv("IP_TUPLAS");
-
 int init(void) {
     CLIENT *clnt;
     enum clnt_stat retval_1;
+    int result_1;
+    char *host = getenv("IP_TUPLAS");
     clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "udp");
 	if (clnt == NULL) {
 		clnt_pcreateerror (host);
@@ -42,7 +42,10 @@ int init(void) {
         printf("Error when calling tuplas init\n");
         clnt_destroy (clnt);
         return -1;
-	}
+	}else if(result_1){
+        printf("Error performing init\n");
+        return -1;
+    }
     clnt_destroy (clnt);
     return 0;
 }
@@ -52,6 +55,7 @@ int set_value(int key, char* value1, int value2, double value3) {
     CLIENT *clnt;
     enum clnt_stat retval_2;
     int result_2;
+    char *host = getenv("IP_TUPLAS");
     clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "udp");
 	if (clnt == NULL) {
 		clnt_pcreateerror (host);
@@ -79,6 +83,7 @@ int get_value(int key, char* value1, int* value2, double* value3) {
     CLIENT *clnt;
     enum clnt_stat retval_3;
     struct Respuesta result_3;
+    char *host = getenv("IP_TUPLAS");
     clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "udp");
 	if (clnt == NULL) {
 		clnt_pcreateerror (host);
@@ -97,9 +102,9 @@ int get_value(int key, char* value1, int* value2, double* value3) {
         clnt_destroy (clnt);
         return -1;
     }else{
-        strcpy(value1,result_2.value1);
-        *value2 = result_2.value2;
-        *value3 = result_2.value3;
+        strcpy(value1,result_3.value1);
+        *value2 = result_3.value2;
+        *value3 = result_3.value3;
         clnt_destroy (clnt);
         return 0;
     }
@@ -110,6 +115,7 @@ int modify_value(int key, char* value1, int value2, double value3) {
     CLIENT *clnt;
     enum clnt_stat retval_4;
     int result_4;
+    char *host = getenv("IP_TUPLAS");
     clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "udp");
 	if (clnt == NULL) {
 		clnt_pcreateerror (host);
@@ -138,6 +144,7 @@ int exist(int key) {
     CLIENT *clnt;
     enum clnt_stat retval_5;
     int result_5;
+    char *host = getenv("IP_TUPLAS");
     clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "udp");
 	if (clnt == NULL) {
 		clnt_pcreateerror (host);
@@ -166,6 +173,7 @@ int copy_key(int key1, int key2) {
     CLIENT *clnt;
     enum clnt_stat retval_6;
     int result_6;
+    char *host = getenv("IP_TUPLAS");
     clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "udp");
 	if (clnt == NULL) {
 		clnt_pcreateerror (host);
@@ -179,7 +187,7 @@ int copy_key(int key1, int key2) {
         printf("Error when calling tuplas copy_key\n");
         clnt_destroy (clnt);
         return -1;
-	}else if(result==-1){
+	}else if(result_6==-1){
         printf("Error in copy_key\n");
         clnt_destroy (clnt);
         return -1;
@@ -194,6 +202,7 @@ int delete_key(int key){
     CLIENT *clnt;
     enum clnt_stat retval_7;
     int result_7;
+    char *host = getenv("IP_TUPLAS");
     clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "udp");
 	if (clnt == NULL) {
 		clnt_pcreateerror (host);
