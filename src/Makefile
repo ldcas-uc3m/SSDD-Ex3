@@ -5,7 +5,7 @@ CC = gcc
 
 CFLAGS = -g -I$(INSTALL_PATH)/include -I/usr/include/tirpc -Wall -fPIC
 LDFLAGS = -L$(INSTALL_PATH)/lib/ -Wl,-R$(DIR)/lib/linux '-Wl,-R$$ORIGIN'
-LDLIBS = -pthread -lm -lrt -lnsl -lpthread -ldl -ltirpc
+LDLIBS =  -lnsl -lpthread -ldl -ltirpc -lm
 
 
 all: $(BIN_FILES)
@@ -14,8 +14,8 @@ all: $(BIN_FILES)
 cliente: cliente.o libclaves.so log.o log.h
 	$(CC) $(CFLAGS) $(LDFLAGS) $(LDLIBS) -L$(INSTALL_PATH) -lclaves $^ -o $@
 	
-servidor: tuplas_server.o server_impl.o linked_list.o tuplas_xdr.o tuplas_svc.o log.o log.h
-	$(CC) $(CFLAGS) $(LDFLAGS) $(LDLIBS) $^ -o $@
+servidor: tuplas_xdr.o tuplas_server.o server_impl.o linked_list.o tuplas_svc.o log.o
+	$(CC) $(CFLAGS) $(LDFLAGS) $^ $(LDLIBS) -o $@
 	
 libclaves.so: claves.o tuplas_xdr.o tuplas_clnt.o
 	$(CC) -shared $(CFLAGS) $(LDFLAGS) $(LDLIBS) $^ -o $@
@@ -34,7 +34,7 @@ tests: $(TEST_FILES)
 
 
 clean:
-	rm -f $(BIN_FILES) $(TEST_FILES) *.o *.so lib/*.so
+	rm -f $(BIN_FILES) $(TEST_FILES) *.o *.so lib/*.so rpc/*.o
 
 
 .SUFFIXES:

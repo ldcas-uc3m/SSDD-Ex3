@@ -65,7 +65,6 @@ void *tratar_peticion(int* sd) {
 	pthread_cond_signal(&c_sd);  // awake main
 	pthread_mutex_unlock(&mutex_sd);
 
-
     // read opcode
     readLine(local_sd, buffer, MAX_LINE);
     pet.opcode = atoi(buffer);

@@ -14,6 +14,7 @@ Implementación de una linked list que guarda tuplas (int key, char value1[], in
 
 pthread_mutex_t mutex_list;
 
+
 /*
 Todas estas funciones devuelve 0 si se ejecutan con éxito y -1 en caso de algún error.
 */

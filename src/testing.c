@@ -4,8 +4,8 @@
 #include <stdlib.h>
 
 #include "lib/claves.h"
+#include "lib/comm.h"
 
-#define MAX_VALUE1 256
 
 typedef int (*FUNC_TEST)();
 

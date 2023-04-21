@@ -4,8 +4,8 @@
 #include <unistd.h>
 
 #include "lib/claves.h"
+#include "lib/comm.h"
 
-#define MAX_VALUE1 256
 #define DEBUG_MODE 1  // uncomment for debug mode
 
 

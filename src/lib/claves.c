@@ -14,8 +14,7 @@ Implementación de las operaciones del cliente
 #include <sys/socket.h>
 
 #include "claves.h"
-#include "comm.h"
-#include "tuplas.h"
+#include "../rpc/tuplas.h"
 
 #define INIT 0
 #define SET_VALUE 1

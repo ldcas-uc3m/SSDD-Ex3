@@ -7,7 +7,6 @@
 #define _TUPLAS_H_RPCGEN
 
 #include <rpc/rpc.h>
-
 #include <pthread.h>
 
 #ifdef __cplusplus
