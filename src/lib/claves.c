@@ -15,7 +15,7 @@ Implementación de las operaciones del cliente
 
 #include "claves.h"
 #include "comm.h"
-#include "lines.h"
+#include "tuplas.h"
 
 #define INIT 0
 #define SET_VALUE 1
@@ -25,395 +25,195 @@ Implementación de las operaciones del cliente
 #define COPY_KEY 5
 #define DELETE_KEY 6
 
-#define NUM_MENSAJES 10
-#define DOMINIO AF_INET
-#define TIPO SOCK_STREAM
-#define PROTOCOLO IPPROTO_TCP
-
-
-
+char[] host = getenv("IP_TUPLAS");
 
 int init(void) {
-    int socket_desc;
-    int status_create = create_socket(&socket_desc);
-    char buffer[MAX_LINE];
-
-    if (status_create != 0) {
+    CLIENT *clnt;
+    enum clnt_stat retval_1;
+    clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "udp");
+	if (clnt == NULL) {
+		clnt_pcreateerror (host);
+		exit (1);
+        printf("Error when setting up the client\n");
         return -1;
-    }
-
-    int res=0;
-    // Enviar peticion
-    sprintf(buffer, "%i", INIT);
-    if (sendMessage(socket_desc, buffer, strlen(buffer) + 1) == -1) {
-        printf("Error in init\n");
+	}
+    retval_1 = tuplas_init_1(&result_1, clnt);
+	if (retval_1 != RPC_SUCCESS) {
+		clnt_perror (clnt, "call failed");
+        printf("Error when calling tuplas init\n");
+        clnt_destroy (clnt);
         return -1;
-    }
-    
-    
-    // Recibir respuesta
-
-
-    if (readLine(socket_desc, buffer, MAX_LINE) == -1) {
-        printf("Error in readLine\n");
-        close(socket_desc);
-        return -1;
-    }else if (res!=-1){
-        res = atoi(buffer);
-    }
-
-    // Close socket
-    int closing = close(socket_desc);
-    if (closing ==-1){
-        printf("Error al cerrar el socket\n");
-        return -1;
-    }else {
-        return res;
-    }
+	}
+    clnt_destroy (clnt);
+    return 0;
 }
 
 
 int set_value(int key, char* value1, int value2, double value3) {
-    char buffer[MAX_LINE];
-
-    if (strlen(value1)>256){
+    CLIENT *clnt;
+    enum clnt_stat retval_2;
+    int result_2;
+    clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "udp");
+	if (clnt == NULL) {
+		clnt_pcreateerror (host);
+		exit (1);
+        printf("Error when setting up the client\n");
+        return -1;
+	}
+    retval_2 = tuplas_set_value_1(key, value1, value2, value3, &result_2, clnt);
+	if (retval_2 != RPC_SUCCESS) {
+		clnt_perror (clnt, "call failed");
+        printf("Error when calling tuplas set_value\n");
+        clnt_destroy (clnt);
+        return -1;
+	} else if (result_2 ==-1){
+        printf("Error in set_value\n");
+        clnt_destroy (clnt);
         return -1;
     }
-
-    char value1_[MAX_VALUE1];
-    memcpy(value1_, value1, strlen(value1));
-    
-
-    int socket_desc;
-    int status_create = create_socket(&socket_desc);
-
-    if (status_create != 0) {
-        return -1;
-    }
-
-    int res=0;
-    // Enviar peticion
-    sprintf(buffer, "%i", SET_VALUE);
-    if (sendMessage(socket_desc, buffer, strlen(buffer) + 1)==-1){
-        printf("Error senting the OPCODE\n");
-        return -1;
-    }
-
-    sprintf(buffer, "%i", key);
-    if (sendMessage(socket_desc, buffer, strlen(buffer) + 1) == -1) {
-        printf("Error when sending the key\n");
-        return -1;
-    }
-
-    if (sendMessage(socket_desc , value1_, strlen(value1) + 1) == -1){
-        printf("Error when sending value 1\n");
-        return -1;
-    }
-    
-    sprintf(buffer, "%i", value2);
-    if (sendMessage(socket_desc, buffer, strlen(buffer) + 1) == -1) {
-        printf("Error when sending value 2\n");
-        return -1;
-    }
-
-
-    sprintf(buffer, "%lf", value3);
-    if (sendMessage(socket_desc, buffer, strlen(buffer) + 1) == -1) {
-        printf("Error when sending value 3\n");
-        return -1;
-    }
-    
-    // Recibir respuesta
-    if (readLine(socket_desc, buffer, MAX_LINE) == -1) {
-        printf("Error reading the response\n");
-        res = -1;
-    }else if(res!=-1){
-        res = atoi(buffer);
-    }
-
-    // Close socket
-    int closing = close(socket_desc);
-    if (closing ==-1){
-        printf("Error al cerrar el socket\n");
-        return -1;
-    }
-
-    return res;
+    clnt_destroy (clnt);
+    return 0;
 }
 
 
 int get_value(int key, char* value1, int* value2, double* value3) {
-    char buffer[MAX_LINE];
-    int socket_desc;
-    int status_create = create_socket(&socket_desc);
-
-    if (status_create != 0) {
+    CLIENT *clnt;
+    enum clnt_stat retval_3;
+    struct Respuesta result_3;
+    clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "udp");
+	if (clnt == NULL) {
+		clnt_pcreateerror (host);
+		exit (1);
+        printf("Error when setting up the client\n");
         return -1;
-    }
-
-    int res=0;
-    // Enviar peticion
-    sprintf(buffer, "%i", GET_VALUE);
-    if(sendMessage(socket_desc , buffer , strlen(buffer) + 1)==-1){
-        printf("Error sending the OPCODE\n");
+	}
+    retval_3 = tuplas_get_value_1(key, &result_3, clnt);
+	if (retval_3 != RPC_SUCCESS) {
+		clnt_perror (clnt, "call failed");
+        printf("Error when calling tuplas get_value\n");
+        clnt_destroy (clnt);
         return -1;
-    }
-
-    sprintf(buffer, "%i", key);
-    if (sendMessage(socket_desc, buffer, strlen(buffer) + 1) == -1) {
-        printf("Error in sendMessage\n");
+	} else if (result_3.result ==-1){
+        printf("Error in get_value\n");
+        clnt_destroy (clnt);
         return -1;
+    }else{
+        strcpy(value1,result_2.value1);
+        *value2 = result_2.value2;
+        *value3 = result_2.value3;
+        clnt_destroy (clnt);
+        return 0;
     }
-    
-    // Recibir respuesta
-    if (readLine(socket_desc, buffer, MAX_LINE) == -1) {
-        printf("Error in readLine res\n");
-        res=-1;
-    }else if (res!=-1){
-        res = atoi(buffer);
-    }
-
-    if (readLine(socket_desc, value1, MAX_LINE)==-1){
-        printf("Error in readline value1\n");
-        return -1;
-    }
-    
-    if (readLine(socket_desc, buffer, MAX_LINE) == -1) {
-        printf("Error in readLine value2\n");
-        res=-1;
-    }else if (res!=-1){
-        *value2 = atoi(buffer);
-    }
-    
-
-    //receive double
-    if (readLine(socket_desc, buffer, MAX_LINE) == -1) {
-        printf("Error in readLine value 3\n");
-        int closing = close(socket_desc);
-        if (closing ==-1){
-            printf("Error al cerrar el socket\n"); 
-        }
-        res = -1;
-    }else if (res!=-1){
-        *value3 = atof(buffer);
-    }
-
-    // Close socket
-    int closing = close(socket_desc);
-    if (closing ==-1){
-        printf("Error al cerrar el socket\n");
-        return -1;
-    }
-
-    return res;
 }
 
 
 int modify_value(int key, char* value1, int value2, double value3) {
-    char buffer[MAX_LINE];
-
-    if (strlen(value1)>256){
+    CLIENT *clnt;
+    enum clnt_stat retval_4;
+    int result_4;
+    clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "udp");
+	if (clnt == NULL) {
+		clnt_pcreateerror (host);
+		exit (1);
+        printf("Error when setting up the client\n");
         return -1;
-    }
-
-    char value1_[MAX_VALUE1];
-    memcpy(value1_, value1, strlen(value1));
-    
-
-    int socket_desc;
-    int status_create = create_socket(&socket_desc);
-
-    if (status_create != 0) {
+	}
+    retval_4 = tuplas_modify_value_1(key, value1, value2, value3, &result_4, clnt);
+	if (retval_4 != RPC_SUCCESS) {
+		clnt_perror (clnt, "call failed");
+        printf("Error when calling tuplas modify_value\n");
+        clnt_destroy (clnt);
         return -1;
-    }
-
-    int res=0;
-
-    // Enviar peticion
-    sprintf(buffer, "%i", MODIFY_VALUE);
-    if (sendMessage(socket_desc , buffer , strlen(buffer) + 1)==-1){
-        printf("Error sending the OPCODE\n");
+	} else if (result_4==-1){
+        printf("Error in modify_key\n");
+        clnt_destroy (clnt);
         return -1;
+    }else{
+        clnt_destroy (clnt);
+        return 0;
     }
-
-    sprintf(buffer, "%i", key);
-    if (sendMessage(socket_desc, buffer, strlen(buffer) + 1) == -1) {
-        printf("Error in sendMessage\n");
-        return -1;
-    }
-
-    if (sendMessage(socket_desc , value1_ , strlen(value1_) + 1)==-1){
-        printf("Error in sendMessage\n");
-    }
-    
-    sprintf(buffer, "%i", value2);
-    if (sendMessage(socket_desc, buffer, strlen(buffer) + 1) == -1) {
-        printf("Error in sendMessage\n");
-        return -1;
-    }
-
-    sprintf(buffer, "%lf", value3);
-    if (sendMessage(socket_desc, buffer, strlen(buffer) + 1) == -1) {
-        printf("Error in sendMessage\n");
-        return -1;
-    }
-    
-    // Recibir respuesta
-    
-    
-    if (readLine(socket_desc, buffer, MAX_LINE) == -1) {
-        printf("Error in readLine\n");
-        res=-1;
-    }else if (res!=-1){
-        res = atoi(buffer);
-    }
-
-    // Close socket
-    int closing = close(socket_desc);
-    if (closing ==-1){
-        printf("Error al cerrar el socket\n");
-        return -1;
-    }
-
-    return res;
 }
 
 
 int exist(int key) {
-    int socket_desc;
-    int status_create = create_socket(&socket_desc);
-    char buffer[MAX_LINE];
-
-    if (status_create != 0) {
+    CLIENT *clnt;
+    enum clnt_stat retval_5;
+    int result_5;
+    clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "udp");
+	if (clnt == NULL) {
+		clnt_pcreateerror (host);
+		exit (1);
+        printf("Error when setting up the client\n");
         return -1;
-    }
-
-    int res=0;
-
-    // Enviar peticion
-    sprintf(buffer, "%i", EXIST);
-    if (sendMessage(socket_desc , buffer , strlen(buffer) + 1)==-1){
-        printf("Error in sendMessage\n");
+	}
+    retval_5 = tuplas_exist_1(key, &result_5, clnt);
+	if (retval_5 != RPC_SUCCESS) {
+		clnt_perror (clnt, "call failed");
+        printf("Error when calling tuplas exist\n");
+        clnt_destroy (clnt);
         return -1;
-    }
-
-    sprintf(buffer, "%i", key);
-    if (sendMessage(socket_desc, buffer, strlen(buffer) + 1) == -1) {
-        printf("Error in sendMessage\n");
+	}else if (result_5==-1){
+        printf("Error in exist\n");
+        clnt_destroy (clnt);
         return -1;
+    }else{
+        clnt_destroy (clnt);
+        return result_5;
     }
-    
-    
-    // Recibir respuesta
-    
-    if (readLine(socket_desc, buffer, MAX_LINE) == -1) {
-        printf("Error in readLine\n");
-        res=-1;
-    }else if(res!=-1){
-        res = atoi(buffer);
-    }
-
-    // Close socket
-    int closing = close(socket_desc);
-    if (closing ==-1){
-        printf("Error al cerrar el socket\n");
-        return -1;
-    }
-
-    return res;
 }
 
 
 int copy_key(int key1, int key2) {
-    
-    int socket_desc;
-    int status_create = create_socket(&socket_desc);
-    char buffer[MAX_LINE];
-
-    if (status_create != 0) {
+    CLIENT *clnt;
+    enum clnt_stat retval_6;
+    int result_6;
+    clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "udp");
+	if (clnt == NULL) {
+		clnt_pcreateerror (host);
+		exit (1);
+        printf("Error when setting up the client\n");
         return -1;
-    }
-
-    int res=0;
-    // Enviar peticion
-    sprintf(buffer, "%i", COPY_KEY);
-    if (sendMessage(socket_desc , buffer , strlen(buffer) + 1)==-1){
-        printf("Error in sendMessage\n");
+	}
+    retval_6 = tuplas_copy_key_1(key1, key2, &result_6, clnt);
+	if (retval_6 != RPC_SUCCESS) {
+		clnt_perror (clnt, "call failed");
+        printf("Error when calling tuplas copy_key\n");
+        clnt_destroy (clnt);
         return -1;
-    }
-
-    sprintf(buffer, "%i", key1);
-    if (sendMessage(socket_desc, buffer, strlen(buffer) + 1) == -1) {
-        printf("Error in sendMessage\n");
+	}else if(result==-1){
+        printf("Error in copy_key\n");
+        clnt_destroy (clnt);
         return -1;
+    }else{
+        clnt_destroy (clnt);
+        return 0;
     }
-    
-    sprintf(buffer, "%i", key2);
-    if (sendMessage(socket_desc, buffer, strlen(buffer) + 1) == -1) {
-        printf("Error in sendMessage\n");
-        return -1;
-    }
-    
-    
-    // Recibir respuesta
-    if (readLine(socket_desc, buffer, MAX_LINE) == -1) {
-        printf("Error in readLine\n");
-        res=-1;
-    }else if(res!=-1){
-        res = atoi(buffer);
-    }
-
-    
-
-    // Close socket
-    int closing = close(socket_desc);
-    if (closing ==-1){
-        printf("Error al cerrar el socket\n");
-        return -1;
-    }
-
-    return res;
 }
 
 
 int delete_key(int key){
-    int socket_desc;
-    int status_create = create_socket(&socket_desc);
-    char buffer[MAX_LINE];
-
-    if (status_create != 0) {
+    CLIENT *clnt;
+    enum clnt_stat retval_7;
+    int result_7;
+    clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "udp");
+	if (clnt == NULL) {
+		clnt_pcreateerror (host);
+		exit (1);
+        printf("Error when setting up the client\n");
         return -1;
-    }
-
-    int res=0;
-    // Enviar peticion
-    sprintf(buffer, "%i", DELETE_KEY);
-    if (sendMessage(socket_desc , buffer , strlen(buffer) + 1)==-1){
-        printf("Error in sendMessage\n");
+	}
+    retval_7 = tuplas_delete_key_1(key, &result_7, clnt);
+	if (retval_7 != RPC_SUCCESS) {
+		clnt_perror (clnt, "call failed");
+        printf("Error when calling tuplas delete_key\n");
+        clnt_destroy (clnt);
         return -1;
-    }
-
-    sprintf(buffer, "%i", key);
-    if (sendMessage(socket_desc, buffer, strlen(buffer) + 1) == -1) {
-        printf("Error in sendMessage\n");
+	}else if(result_7==-1){
+        printf("Error in delete_key\n");
+        clnt_destroy (clnt);
         return -1;
+    }else{
+        clnt_destroy (clnt);
+        return 0;
     }
-    
-    // Recibir respuesta
-
-    if (readLine(socket_desc, buffer, MAX_LINE) == -1) {
-        printf("Error in readLine\n");
-        res=-1;
-    }else if(res!=-1){
-        res = atoi(buffer);
-    }
-
-    // Close socket
-    int closing = close(socket_desc);
-    if (closing ==-1){
-        printf("Error al cerrar el socket\n");
-        return -1;
-    }
-
-    return res;
 }
