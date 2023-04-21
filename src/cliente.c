@@ -6,7 +6,7 @@
 #include "lib/claves.h"
 
 #define MAX_VALUE1 256
-// #define DEBUG_MODE 1  // uncomment for debug mode
+#define DEBUG_MODE 1  // uncomment for debug mode
 
 
 int std_run() {
@@ -103,8 +103,6 @@ void debug_run() {
                 result = init();
 
                 printf("Respuesta: {result: %i}\n", result);
-                printf("Pulse ENTER para continuar...\n");
-                scanf("%s", tmp);
 
                 break;
 
@@ -123,8 +121,6 @@ void debug_run() {
                 result = set_value(key, value1, value2, value3);
 
                 printf("\nRespuesta: {result: %i}\n", result);
-                printf("Pulse ENTER para continuar...\n");
-                scanf("%s", tmp);
 
                 break;
                 
@@ -137,8 +133,6 @@ void debug_run() {
                 result = get_value(key, value1, &value2, &value3);
 
                 printf("\nRespuesta: {result: %i, value1: %s, value2: %i, value3: %f}\n", result, value1, value2, value3);
-                printf("Pulse ENTER para continuar...\n");
-                scanf("%s", tmp);
 
                 break;
 
@@ -157,8 +151,6 @@ void debug_run() {
                 result = modify_value(key, value1, value2, value3);
 
                 printf("\nRespuesta: {result: %i}\n", result);
-                printf("Pulse ENTER para continuar...\n");
-                scanf("%s", tmp);
 
                 break;
             
@@ -171,8 +163,6 @@ void debug_run() {
                 result = exist(key);
 
                 printf("\nRespuesta: {result: %i}\n", result);
-                printf("Pulse ENTER para continuar...\n");
-                scanf("%s", tmp);
 
                 break;
 
@@ -187,8 +177,6 @@ void debug_run() {
                 result = copy_key(key1,key2);
 
                 printf("\nRespuesta: {result: %i}\n", result);
-                printf("Pulse ENTER para continuar...\n");
-                scanf("%s", tmp);
 
                 break;
 
@@ -202,7 +190,6 @@ void debug_run() {
 
                 printf("\nRespuesta: {result: %i}\n", result);
 
-                printf("Pulse ENTER para continuar...\n");
                 break;
 
             default:
@@ -211,7 +198,9 @@ void debug_run() {
                 break;
         }
 
-        // sleep(1);
+        printf("Pulse ENTER para continuar...\n");
+        scanf("%s", tmp);
+
     }
 }
 

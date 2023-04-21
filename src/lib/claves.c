@@ -31,64 +31,6 @@ Implementación de las operaciones del cliente
 #define PROTOCOLO IPPROTO_TCP
 
 
-int create_socket(int *socket_desc) {
-    int socket_fd;
-	struct sockaddr_in server_addr;
-
-    // Read env variables
-    char *IP_SERVER_STR = getenv("IP_TUPLAS");
-    char *PORT_SERVER_STR = getenv("PORT_TUPLAS");
-
-    if (strcmp(IP_SERVER_STR, "localhost") == 0) {
-        IP_SERVER_STR = "127.0.0.1";
-    }
-    
-    if (IP_SERVER_STR == NULL) {
-        printf("Necesitas definir \"IP_TUPLAS\"\n");
-        return -1;
-    }
-    if (PORT_SERVER_STR == NULL) {
-        printf("Necesitas definir \"PORT_SERVER_STR\"\n");
-        return -1;
-    }
-
-    short int PORT_SERVER = atoi(PORT_SERVER_STR);
-
-    // printf("Connecting to %i:%s\n", PORT_SERVER, IP_SERVER_STR);
-
-    // Create socket
-	socket_fd = socket(DOMINIO , TIPO , PROTOCOLO);
-	
-	if (socket_fd == -1)
-	{
-		printf("No se pudo crear el socket");
-        return -1;
-	}
-
-    // Obtain Server address 
-    // struct hostent *hp;
-    // bzero((char*) &server_addr, sizeof(server_addr));
-    // hp = gethostbyname(IP_SERVER_STR);
-    // if (hp == NULL) {
-    //     perror("Error en gethostbyname");
-    //     exit(1);
-    // }
-
-	// memcpy(&(server_addr.sin_addr), hp->h_addr, hp->h_length);
-    server_addr.sin_addr.s_addr = inet_addr(IP_SERVER_STR);
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(PORT_SERVER);
-
-	//Connect to remote server
-	if (connect(socket_fd , (struct sockaddr *)&server_addr , sizeof(server_addr)) == -1)
-	{
-		printf("Error al connectar con el servidor\n");
-		return -1;
-	}
-
-    *socket_desc = socket_fd;
-    return 0;
-}
 
 
 int init(void) {

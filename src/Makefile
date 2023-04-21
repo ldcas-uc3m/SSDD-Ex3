@@ -1,11 +1,11 @@
 BIN_FILES  = cliente servidor testing
 TEST_FILES = test_seq test_conc test_linked_list
-VPATH = lib tests  # path with source files not found in current dir
+VPATH = lib tests rpc  # path with source files not found in current dir
 CC = gcc
 
-CFLAGS = -g -I$(INSTALL_PATH)/include -Wall -fPIC
+CFLAGS = -g -I$(INSTALL_PATH)/include -I/usr/include/tirpc -Wall -fPIC
 LDFLAGS = -L$(INSTALL_PATH)/lib/ -Wl,-R$(DIR)/lib/linux '-Wl,-R$$ORIGIN'
-LDLIBS = -pthread -lm -lrt
+LDLIBS = -pthread -lm -lrt -lnsl -lpthread -ldl -ltirpc
 
 
 all: $(BIN_FILES)
@@ -14,10 +14,10 @@ all: $(BIN_FILES)
 cliente: cliente.o libclaves.so log.o log.h
 	$(CC) $(CFLAGS) $(LDFLAGS) $(LDLIBS) -L$(INSTALL_PATH) -lclaves $^ -o $@
 	
-servidor: servidor.o server_impl.o linked_list.o lines.o log.o log.h
+servidor: tuplas_server.o server_impl.o linked_list.o tuplas_xdr.o tuplas_svc.o log.o log.h
 	$(CC) $(CFLAGS) $(LDFLAGS) $(LDLIBS) $^ -o $@
 	
-libclaves.so: claves.o lines.o
+libclaves.so: claves.o tuplas_xdr.o tuplas_clnt.o
 	$(CC) -shared $(CFLAGS) $(LDFLAGS) $(LDLIBS) $^ -o $@
 
 testing: testing.o libclaves.so
