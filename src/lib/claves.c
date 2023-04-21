@@ -100,11 +100,8 @@ int get_value(int key, char* value1, int* value2, double* value3) {
         clnt_destroy (clnt);
         return -1;
     }else{
-        printf("Aqui llego\n");
         strcpy(value1,result_3.value1);
-        printf("Aqui llego 2\n");
         *value2 = result_3.value2;
-        printf("Aqui llego 3\n");
         *value3 = result_3.value3;
         clnt_destroy (clnt);
         return 0;
