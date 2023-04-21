@@ -1,6 +1,6 @@
-BIN_FILES  = cliente servidor testing
-TEST_FILES = test_seq test_conc test_linked_list
-VPATH = lib tests rpc  # path with source files not found in current dir
+BIN_FILES  = cliente servidor
+TEST_FILES = testing
+VPATH = lib rpc  # path with source files not found in current dir
 CC = gcc
 
 CFLAGS = -g -I$(INSTALL_PATH)/include -I/usr/include/tirpc -Wall -fPIC
@@ -11,31 +11,30 @@ LDLIBS =  -lnsl -lpthread -ldl -ltirpc -lm
 all: $(BIN_FILES)
 .PHONY : all
 
-cliente: cliente.o libclaves.so log.o log.h
-	$(CC) $(CFLAGS) $(LDFLAGS) $(LDLIBS) -L$(INSTALL_PATH) -lclaves $^ -o $@
+cliente: cliente.o libclaves.so
+	$(CC) $(CFLAGS) $(LDFLAGS) -L$(INSTALL_PATH) -lclaves $^ $(LDLIBS) -o $@
 	
-servidor: tuplas_xdr.o tuplas_server.o server_impl.o linked_list.o tuplas_svc.o log.o
+servidor: tuplas_xdr.o servidor.o server_impl.o linked_list.o tuplas_svc.o log.o
 	$(CC) $(CFLAGS) $(LDFLAGS) $^ $(LDLIBS) -o $@
 	
 libclaves.so: claves.o tuplas_xdr.o tuplas_clnt.o
 	$(CC) -shared $(CFLAGS) $(LDFLAGS) $(LDLIBS) $^ -o $@
 
 testing: testing.o libclaves.so
-	$(CC) $(CFLAGS) $(LDFLAGS) $(LDLIBS) -L$(INSTALL_PATH) -lclaves $^ -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) -L$(INSTALL_PATH) -lclaves $^ $(LDLIBS) -o $@
 
 
 %.o: %.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $<
 
 
-tests: $(TEST_FILES)
+test: $(TEST_FILES)
 .SUFFIXES:
-.PHONY : tests
+.PHONY : test
 
 
 clean:
-	rm -f $(BIN_FILES) $(TEST_FILES) *.o *.so lib/*.so rpc/*.o
-
+	rm -f $(BIN_FILES) $(TEST_FILES) *.o *.so
 
 .SUFFIXES:
 .PHONY : clean

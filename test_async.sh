@@ -7,18 +7,16 @@
 cd src/
 
 make
-
-PORT=9990
+make test
 
 # run tests
 export IP_TUPLAS=localhost
-export PORT_TUPLAS=$PORT
 
 # link dynamic library
 export LD_LIBRARY_PATH=lib/
 
 # run server
-./servidor $PORT &
+./servidor &
 pid_servidor=$!
 
 sleep 2

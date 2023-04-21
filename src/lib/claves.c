@@ -3,18 +3,13 @@ Implementación de las operaciones del cliente
 */
 
 #include <stdio.h>
-#include <mqueue.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <pthread.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <sys/socket.h>
 
 #include "claves.h"
 #include "../rpc/tuplas.h"
+
 
 #define INIT 0
 #define SET_VALUE 1
@@ -24,12 +19,13 @@ Implementación de las operaciones del cliente
 #define COPY_KEY 5
 #define DELETE_KEY 6
 
+
 int init(void) {
     CLIENT *clnt;
     enum clnt_stat retval_1;
     int result_1;
     char *host = getenv("IP_TUPLAS");
-    clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "udp");
+    clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "tcp");
 	if (clnt == NULL) {
 		clnt_pcreateerror (host);
 		exit (1);
@@ -56,7 +52,7 @@ int set_value(int key, char* value1, int value2, double value3) {
     enum clnt_stat retval_2;
     int result_2;
     char *host = getenv("IP_TUPLAS");
-    clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "udp");
+    clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "tcp");
 	if (clnt == NULL) {
 		clnt_pcreateerror (host);
 		exit (1);
@@ -84,7 +80,7 @@ int get_value(int key, char* value1, int* value2, double* value3) {
     enum clnt_stat retval_3;
     struct Respuesta result_3;
     char *host = getenv("IP_TUPLAS");
-    clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "udp");
+    clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "tcp");
 	if (clnt == NULL) {
 		clnt_pcreateerror (host);
 		exit (1);
@@ -116,7 +112,7 @@ int modify_value(int key, char* value1, int value2, double value3) {
     enum clnt_stat retval_4;
     int result_4;
     char *host = getenv("IP_TUPLAS");
-    clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "udp");
+    clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "tcp");
 	if (clnt == NULL) {
 		clnt_pcreateerror (host);
 		exit (1);
@@ -145,7 +141,7 @@ int exist(int key) {
     enum clnt_stat retval_5;
     int result_5;
     char *host = getenv("IP_TUPLAS");
-    clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "udp");
+    clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "tcp");
 	if (clnt == NULL) {
 		clnt_pcreateerror (host);
 		exit (1);
@@ -174,7 +170,7 @@ int copy_key(int key1, int key2) {
     enum clnt_stat retval_6;
     int result_6;
     char *host = getenv("IP_TUPLAS");
-    clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "udp");
+    clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "tcp");
 	if (clnt == NULL) {
 		clnt_pcreateerror (host);
 		exit (1);
@@ -203,7 +199,7 @@ int delete_key(int key){
     enum clnt_stat retval_7;
     int result_7;
     char *host = getenv("IP_TUPLAS");
-    clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "udp");
+    clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "tcp");
 	if (clnt == NULL) {
 		clnt_pcreateerror (host);
 		exit (1);

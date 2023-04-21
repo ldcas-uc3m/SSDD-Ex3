@@ -6,7 +6,7 @@
 #include "lib/claves.h"
 #include "lib/comm.h"
 
-#define DEBUG_MODE 1  // uncomment for debug mode
+// #define DEBUG_MODE 1  // uncomment for debug mode
 
 
 int std_run() {

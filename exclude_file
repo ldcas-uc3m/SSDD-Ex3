@@ -1,6 +1,7 @@
 exclude_file
 README.md
 img
+report
 zip.sh
 .git*
 servidor

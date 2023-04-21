@@ -10,7 +10,7 @@ Implementación de una linked list que guarda tuplas (int key, char value1[], in
 
 #include "linked_list.h"
 #include "comm.h"
-#include "../log.h"
+#include "log.h"
 
 pthread_mutex_t mutex_list;
 
