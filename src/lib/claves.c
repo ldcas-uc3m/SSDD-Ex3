@@ -77,8 +77,10 @@ int set_value(int key, char* value1, int value2, double value3) {
 
 int get_value(int key, char* value1, int* value2, double* value3) {
     CLIENT *clnt;
+    value1  = malloc(MAX_VALUE1*sizeof(char));
     enum clnt_stat retval_3;
     struct Respuesta result_3;
+    result_3.value1 = malloc(MAX_VALUE1*sizeof(char));
     char *host = getenv("IP_TUPLAS");
     clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "tcp");
 	if (clnt == NULL) {
@@ -98,8 +100,11 @@ int get_value(int key, char* value1, int* value2, double* value3) {
         clnt_destroy (clnt);
         return -1;
     }else{
+        printf("Aqui llego\n");
         strcpy(value1,result_3.value1);
+        printf("Aqui llego 2\n");
         *value2 = result_3.value2;
+        printf("Aqui llego 3\n");
         *value3 = result_3.value3;
         clnt_destroy (clnt);
         return 0;

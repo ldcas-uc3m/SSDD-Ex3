@@ -22,7 +22,6 @@ void execute_test(FUNC_TEST f_test, char *msg) {
     start = clock();
     int res = f_test();
     elapsed = ((double)(clock() - start)) / CLOCKS_PER_SEC;
-
     char time_str[128];
     format_time(time_str, elapsed);
 
