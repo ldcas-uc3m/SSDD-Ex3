@@ -239,7 +239,7 @@ int modifyKey(List* l, int key, char* value1, int value2, double value3) {
     List aux = *l;  // head
     while (aux != NULL) {
         if (aux->key == key) {  // found
-            aux->value1 = malloc(MAX_VALUE1*sizeof(char));
+            // aux->value1 = malloc(MAX_VALUE1*sizeof(char));
             strcpy(aux->value1, value1);
             aux->value2 = value2;
             aux->value3 = value3;
