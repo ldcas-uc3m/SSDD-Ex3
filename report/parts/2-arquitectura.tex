@@ -1,0 +1,23 @@
+\section{Diseño e implementación}
+
+La arquitectura del ejercicio es similar a la del ejercicio anterior, pero usando RPCs en lugar de \textit{sockets} TCP.\\
+El diseño general es el siguiente:
+
+% \begin{figure}[!h]
+%     \includesvg[width=\textwidth]{img/architecture_diagram.svg}
+% \end{figure}
+
+\subsection{Interfaz RPC}
+La interfaz para el RPC está definida en \texttt{src/rpc/tuplas.x}, consistiendo en las mismas operaciones que la API del cliente, pero con argumentos y valores de respuesta ligeramente distintos, ya que en C es necesario pasar punteros para devolver valores; e.g. en \texttt{get\_value()} es necesario devolver los valores de la tupla.\\
+Por ese motivo, en la interfaz de la RPC los argumentos son exclusivamente los requeridos por la operación y los valores de respuesta son números enteros para indicar el resultado, excepto en \texttt{tuplas\_get\_value()}, en el cual se usa una estructura para devolver tanto el resultado de la operación como los valores requeridos.\newline
+
+Para la generación del código fuente necesario para la interfaz (\texttt{src/rpc/tuplas.h}, \texttt{src/rpc/tuplas\_xdr.c}, \texttt{src/rpc/tuplas\_svc.c} y \texttt{src/rpc/tuplas\_clnt.c}), igual que para los \textit{templates} en los que se basan el servidor y la API del cliente se usó \texttt{rpcgen} con la interfaz definida.
+
+\subsection{Servidor}
+El archivo fuente del servidor (\texttt{src/servidor.c}) se creó a partir del \textit{template} de servidor generado por \texttt{rpcgen} (\texttt{tuplas\_server.c}) añadiendo las llamadas pertinentes a la interfaz del servidor con el almacenamiento, \texttt{src/lib/server\_impl.h}, algún \texttt{malloc()} pertinente, y funcionalidades de \textit{logging}.
+
+
+\subsection{API del Cliente}
+Similar al servidor, el archivo fuente de la API del cliente (\texttt{src/lib/claves.c}) se creó a partir del \textit{template} de cliente generado por \texttt{rpcgen} (\texttt{tuplas\_client.c}), añadiendo  algún \texttt{malloc()} pertinente.\newline
+
+También cabe mencionar aquí el uso de sockets TCP.

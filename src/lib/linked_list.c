@@ -60,7 +60,6 @@ int setKey(List* l, int key, char* value1, int value2, double value3) {
             aux = aux->next;
         }
     }
-    // pthread_mutex_unlock(&mutex_list);
     // aux is now tail
     
     // insert new element
@@ -94,12 +93,10 @@ int setKey(List* l, int key, char* value1, int value2, double value3) {
 
     // link to the list
     if (*l == NULL) {  // emtpy list, insert in head
-        // pthread_mutex_lock(&mutex_list);
         *l = ptr;
         pthread_mutex_unlock(&mutex_list);
     }
     else {  // insert in head
-        // pthread_mutex_lock(&mutex_list);
         ptr->next = *l;
         *l = ptr;
         pthread_mutex_unlock(&mutex_list);
@@ -239,7 +236,6 @@ int modifyKey(List* l, int key, char* value1, int value2, double value3) {
     List aux = *l;  // head
     while (aux != NULL) {
         if (aux->key == key) {  // found
-            // aux->value1 = malloc(MAX_VALUE1*sizeof(char));
             strcpy(aux->value1, value1);
             aux->value2 = value2;
             aux->value3 = value3;
