@@ -92,7 +92,6 @@ int setKey(List* l, int key, char* value1, int value2, double value3) {
     ptr->value3 = value3;
     ptr->next = NULL;
 
-
     // link to the list
     if (*l == NULL) {  // emtpy list, insert in head
         // pthread_mutex_lock(&mutex_list);
@@ -113,7 +112,6 @@ int getKey(List l, int key, char* value1, int* value2, double* value3) {
     /*
     Obtiene el valor asociado a una clave key en la lista l, y lo guarda en el argumento value.
     */
-
     // traverse the list
     pthread_mutex_lock(&mutex_list);
 
@@ -241,6 +239,7 @@ int modifyKey(List* l, int key, char* value1, int value2, double value3) {
     List aux = *l;  // head
     while (aux != NULL) {
         if (aux->key == key) {  // found
+            aux->value1 = malloc(MAX_VALUE1*sizeof(char));
             strcpy(aux->value1, value1);
             aux->value2 = value2;
             aux->value3 = value3;

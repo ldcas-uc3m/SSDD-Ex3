@@ -52,6 +52,7 @@ int set_value(int key, char* value1, int value2, double value3) {
     enum clnt_stat retval_2;
     int result_2;
     char *host = getenv("IP_TUPLAS");
+    char buffer[MAX_VALUE1];
     clnt = clnt_create (host, TUPLASPROG, TUPLASPROGVER, "tcp");
 	if (clnt == NULL) {
 		clnt_pcreateerror (host);
@@ -59,6 +60,8 @@ int set_value(int key, char* value1, int value2, double value3) {
         printf("Error when setting up the client\n");
         return -1;
 	}
+
+    sprintf(buffer, "%s", value1);
     retval_2 = tuplas_set_value_1(key, value1, value2, value3, &result_2, clnt);
 	if (retval_2 != RPC_SUCCESS) {
 		clnt_perror (clnt, "call failed");
@@ -77,7 +80,6 @@ int set_value(int key, char* value1, int value2, double value3) {
 
 int get_value(int key, char* value1, int* value2, double* value3) {
     CLIENT *clnt;
-    value1  = malloc(MAX_VALUE1*sizeof(char));
     enum clnt_stat retval_3;
     struct Respuesta result_3;
     result_3.value1 = malloc(MAX_VALUE1*sizeof(char));

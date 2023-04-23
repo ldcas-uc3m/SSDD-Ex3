@@ -42,7 +42,6 @@ int get(int key, char* value1, int* value2, double* value3) {
     /*
     Gets specified tuple
     */
-
     return getKey(list, key, value1, value2, value3);   
 }
 

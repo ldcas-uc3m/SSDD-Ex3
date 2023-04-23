@@ -40,7 +40,6 @@ bool_t tuplas_get_value_1_svc(int key, struct Respuesta* result, struct svc_req*
 	result->value1 = malloc(MAX_VALUE1 * sizeof(char));
 
 	result->result = get(key, result->value1, &(result->value2), &(result->value3));
-
 	return retval;
 }
 
