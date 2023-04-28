@@ -1,23 +1,35 @@
 \section{Diseño e implementación}
 
 La arquitectura del ejercicio es similar a la del ejercicio anterior, pero usando RPCs en lugar de \textit{sockets} TCP.\\
-El diseño general es el siguiente:
+El diseño general está formado por Interfaz RPC, servidor y API del cliente.
+
 
 % \begin{figure}[!h]
 %     \includesvg[width=\textwidth]{img/architecture_diagram.svg}
 % \end{figure}
 
 \subsection{Interfaz RPC}
+La ventaja de usar este sistema en vez de programar explícitamente los sockets o colas de mensajes es la rapidez de implementación. Usando las librerias ya existentes de rps y rpcgen se pueden facilmente generar los archivos estandar que se necesitan para la comunicacion asi como los templates que sirven para implementar el servidor y las librerías de cliente específicas para nuestra aplicación. Esto permitirá hacer el código solo definiendo las funciones deseadas y los parámetros que se deberán recibir así como la estructura de las respuestas.
+
 La interfaz para el RPC está definida en \texttt{src/rpc/tuplas.x}, consistiendo en las mismas operaciones que la API del cliente, pero con argumentos y valores de respuesta ligeramente distintos, ya que en C es necesario pasar punteros para devolver valores; e.g. en \texttt{get\_value()} es necesario devolver los valores de la tupla.\\
 Por ese motivo, en la interfaz de la RPC los argumentos son exclusivamente los requeridos por la operación y los valores de respuesta son números enteros para indicar el resultado, excepto en \texttt{tuplas\_get\_value()}, en el cual se usa una estructura para devolver tanto el resultado de la operación como los valores requeridos.\newline
 
 Para la generación del código fuente necesario para la interfaz (\texttt{src/rpc/tuplas.h}, \texttt{src/rpc/tuplas\_xdr.c}, \texttt{src/rpc/tuplas\_svc.c} y \texttt{src/rpc/tuplas\_clnt.c}), igual que para los \textit{templates} en los que se basan el servidor y la API del cliente se usó \texttt{rpcgen} con la interfaz definida.
 
 \subsection{Servidor}
-El archivo fuente del servidor (\texttt{src/servidor.c}) se creó a partir del \textit{template} de servidor generado por \texttt{rpcgen} (\texttt{tuplas\_server.c}) añadiendo las llamadas pertinentes a la interfaz del servidor con el almacenamiento, \texttt{src/lib/server\_impl.h}, algún \texttt{malloc()} pertinente, y funcionalidades de \textit{logging}.
+El archivo fuente del servidor (\texttt{src/servidor.c}) se creó a partir del \textit{template} de servidor generado por \texttt{rpcgen} (\texttt{tuplas\_server.c}) añadiendo las llamadas pertinentes a la interfaz del servidor con el almacenamiento, \texttt{src/lib/server\_impl.h}, algún \texttt{malloc()} pertinente, y funcionalidades de \textit{logging}. El principal cambio que supone este sistema es que tenemos que tener en cuenta la respuesta obligatoria por medio de un integer necesaria en las rcps.
 
+Al igual que en la práctica anterior, \texttt{src/server\_impl.c}, conecta las funciones definidas en el servidor con las funciones del sistema de almacenamiento de datos por medio de linked lists. 
+
+\subsubsection{Linked lists}
+
+La implementación de las linked lists se ha mantenido desde la práctica anterior, ya que las funciones son independientes al sistema de comunicación que usemos y son internas de las implementación del servidor.
+
+Las linked lists se organizan mediante nodos, que incluyen una integer key, un char para el almacenamiento de la cadena de caracteres correspondiente a value1, así como integer y double para el almacenamiento de value3 y value3 respectivamente. Además se incluye una referencia al siguiente nodo por medio de un puntero. Al guardar valores se hace como en el caso de una pila, incluyendo el valor en el nodo head de la Linked List,
+
+Todas las funciones necesarias para el funcionamiento del sistema están implementadas como una función de la linked lists, incluyendo mutex en los accesos críticos a la información y haciendo control de errores para asegurarnos que una función no se ejecute si no se necesita. Siempre se comprueba la existencia de la clave en la lista y posteriormente se realizan las operaciones necesarias teniendo en cuenta si es una lista vacía y los parámetros de existencia de clave necesarios en algunas de las funciones.
 
 \subsection{API del Cliente}
 Similar al servidor, el archivo fuente de la API del cliente (\texttt{src/lib/claves.c}) se creó a partir del \textit{template} de cliente generado por \texttt{rpcgen} (\texttt{tuplas\_client.c}), añadiendo  algún \texttt{malloc()} pertinente.\newline
 
-También cabe mencionar aquí el uso de sockets TCP.
+Seguimos manteniendo la independencia de la clase cliente, y usandola como un ejemplo de cliente.
