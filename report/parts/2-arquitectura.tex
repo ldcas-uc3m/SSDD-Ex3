@@ -19,7 +19,9 @@ Para la generación del código fuente necesario para la interfaz (\texttt{src/r
 \subsection{Servidor}
 El archivo fuente del servidor (\texttt{src/servidor.c}) se creó a partir del \textit{template} de servidor generado por \texttt{rpcgen} (\texttt{tuplas\_server.c}) añadiendo las llamadas pertinentes a la interfaz del servidor con el almacenamiento, \texttt{src/lib/server\_impl.h}, algún \texttt{malloc()} pertinente, y funcionalidades de \textit{logging}. El principal cambio que supone este sistema es que tenemos que tener en cuenta la respuesta obligatoria por medio de un integer necesaria en las rcps.
 
-Al igual que en la práctica anterior, \texttt{src/server\_impl.c}, conecta las funciones definidas en el servidor con las funciones del sistema de almacenamiento de datos por medio de linked lists. 
+Incluimos handling de errores en caso fallo tanto en el envío como en la lectura de los mensajes por si hay un error inesperado en el protocolo. También controla los mensajes de error generados por la linked list en caso de no poder procesar la petición correctamente o que se haya pedido un dato inexistente en la base de datos.
+
+Al igual que en la práctica anterior, \texttt{src/server\_impl.c}, conecta las funciones definidas en el servidor con las funciones del sistema de almacenamiento de datos por medio de las linked lists. 
 
 \subsubsection{Linked lists}
 
@@ -30,6 +32,9 @@ Las linked lists se organizan mediante nodos, que incluyen una integer key, un c
 Todas las funciones necesarias para el funcionamiento del sistema están implementadas como una función de la linked lists, incluyendo mutex en los accesos críticos a la información y haciendo control de errores para asegurarnos que una función no se ejecute si no se necesita. Siempre se comprueba la existencia de la clave en la lista y posteriormente se realizan las operaciones necesarias teniendo en cuenta si es una lista vacía y los parámetros de existencia de clave necesarios en algunas de las funciones.
 
 \subsection{API del Cliente}
-Similar al servidor, el archivo fuente de la API del cliente (\texttt{src/lib/claves.c}) se creó a partir del \textit{template} de cliente generado por \texttt{rpcgen} (\texttt{tuplas\_client.c}), añadiendo  algún \texttt{malloc()} pertinente.\newline
+Similar al servidor, el archivo fuente de la API del cliente (\texttt{src/lib/claves.c}) se creó a partir del \textit{template} de cliente generado por \texttt{rpcgen} (\texttt{tuplas\_client.c}), añadiendo  algún \texttt{malloc()} pertinente. Todas las funcionalidades necesarias han sido implementadas en el esquema de funciones generado automaticamente, teniendo en cuenta las variables extras necesarias para el sistema de rpc. Se ha realizado tmb el sistema completo para el manejo de los errores en cada una de las funciones implementadas.
 
-Seguimos manteniendo la independencia de la clase cliente, y usandola como un ejemplo de cliente.
+El principal cambio reside en las variables de entorno ya que en este caso no es necesario definir el puerto en el que haremos la conexión, de esto se encarga la rcp.
+
+Seguimos manteniendo la independencia de la clase \texttt{src/lib/cliente.c}, y usandola como un ejemplo de uso. 
+\newline

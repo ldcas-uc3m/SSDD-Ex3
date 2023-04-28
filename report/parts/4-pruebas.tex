@@ -1,3 +1,9 @@
 \section{Pruebas}
 Al tener las mismas funcionalidades del ejercicio anterior, hemos usado la misma batería de pruebas.\\
 Se pueden ejecutar con los \textit{scripts} \texttt{test.sh} (test no concurrente) y \texttt{test\_async.sh} (test concurrente), ambos usando el cliente \texttt{src/testing.c}.
+
+El archivo de \texttt{src/testing.c} implementa los 21 tests que van desde funcionalidades básicas, mezcla de funcionalidades complementarias a tests masivos de las funcionalidades insertadas.
+
+El archivo \texttt{test\_async.sh} incluye la prueba de los 21 tests con 4 clientes distintos pero es ampliable a cualquier numero de clientes. Ya que algunos tests son de ejecucion multiple, recomendamos poner la id inicial de los nuevos clientes creados con una diferencia de minimo 2000 unidades entre ellos. De esta manera, no intentarán cambiar el valor que acaba de insertar o borrar otro de los clientes. Esto dará un mensaje de error (parte de la implementación requerida) y no permitirá mostrar completamente el funcionamiento de los tests. Este cambio de 2000 unidades es debido a la manera de testear, no a la funcionalidad de la aplicación.
+
+El sistema de logging sigue implementado de la misma manera que en la práctica anterior y puede ser activado descomentando el define del archivo \texttt{src/lib/testing.c}
